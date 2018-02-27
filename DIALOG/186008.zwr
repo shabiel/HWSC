@@ -1,0 +1,6 @@
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,-1)="0^8"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,0)="186008^1^y^VISTALINK^Invalid Server Lookup Key"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,2,0)="^.844^1^1^3070601^^"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,2,1,0)="Invalid server lookup key name: '|1|' does not exist."
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,3,0)="^.845^1^1"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,3,1,0)="1^lookup key name"

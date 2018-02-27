@@ -1,0 +1,5 @@
+^XTMP("K2VC","EXPORT","KRN",.402,IEN,-1)="0^4"
+^XTMP("K2VC","EXPORT","KRN",.402,IEN,0)="XOBW WEB SERVER SETUP^3070531.0723^@^18.12^^@^3100913"
+^XTMP("K2VC","EXPORT","KRN",.402,IEN,"DR",1,18.12)=".01;.04;.03//80;.07//30;.06;WRITE !!,""Security Credentials"";WRITE !,""===================="";1.01;IF +X=0 SET Y=""@100"";200;1.02;@100;IF '$$SSLOK^XOBWENV() SET Y=""@200"";WRITE !!,""SSL Setup"";WRITE !,""========="";3.01//FALSE;"
+^XTMP("K2VC","EXPORT","KRN",.402,IEN,"DR",1,18.12,1)="IF +X=0 SET Y=""@200"";3.02;3.03;@200;WRITE !!,""Authorize Web Services"";WRITE !,""======================"";100;"
+^XTMP("K2VC","EXPORT","KRN",.402,IEN,"DR",2,18.121)=".01;.06;"

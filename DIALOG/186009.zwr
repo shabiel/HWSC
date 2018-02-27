@@ -1,0 +1,6 @@
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,-1)="0^9"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,0)="186009^1^y^VISTALINK^Server Lookup Key Missing Association"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,2,0)="^.844^1^1^3070601^^"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,2,1,0)="server association missing for key '|1|'."
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,3,0)="^.845^1^1"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,3,1,0)="1^server lookup key name"

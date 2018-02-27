@@ -1,0 +1,7 @@
+^XTMP("K2VC","EXPORT","KRN",101,IEN,-1)="0^20"
+^XTMP("K2VC","EXPORT","KRN",101,IEN,0)="XOBW WEB SERVICE MANAGER^Web Service Manager^^A^^^^^^^^VISTALINK"
+^XTMP("K2VC","EXPORT","KRN",101,IEN,1,0)="^101.06^2^2^3070502^^"
+^XTMP("K2VC","EXPORT","KRN",101,IEN,1,1,0)="This protocol executes the ListMan template that allows the user to "
+^XTMP("K2VC","EXPORT","KRN",101,IEN,1,2,0)="maintain web service metadata."
+^XTMP("K2VC","EXPORT","KRN",101,IEN,20)="DO WSM^XOBWU"
+^XTMP("K2VC","EXPORT","KRN",101,IEN,99)="62153,34140"

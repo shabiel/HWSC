@@ -1,0 +1,7 @@
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,-1)="0^1"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,0)="186001^1^y^VISTALINK^Web Service error"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,2,0)="^^1^1^3060620^"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,2,1,0)="Event: |1|  Text: |2|"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,3,0)="^.845^2^2"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,3,1,0)="1^Event that triggered error (CREATE or INVOKE)"
+^XTMP("K2VC","EXPORT","KRN",.84,IEN,3,2,0)="2^Error text"
