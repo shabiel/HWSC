@@ -1,5 +1,6 @@
-XOBWLIB ;ALB/MJK - HWSC :: Utilities Library ; 09/13/10 4:00pm
- ;;1.0;HwscWebServiceClient;;September 13, 2010
+XOBWLIB ;ALB/MJK - HWSC :: Utilities Library ;2018-03-30  2:17 PM
+ ;;1.0;HwscWebServiceClient;**10001**;September 13, 2010;Build 31
+ ; *10001 changes (throughout) by OSEHRA/Sam Habiel*
  ;
  QUIT
  ;
@@ -89,6 +90,78 @@ POST(XOBREST,XOBRSCE,XOBERR,XOBFERR) ; -- do HTTP POST method and force M/Cache 
  SET XOBOK=$$STATCHK(XOBREST.Post(XOBRSCE),.XOBERR,$GET(XOBFERR,1))
  IF XOBOK SET XOBOK=$$HTTPCHK(XOBREST,.XOBERR,$GET(XOBFERR,1))
  QUIT XOBOK
+ ;
+POSTGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD)  ; PEP -- POST on GT.M *10001*
+ ; GT.M implementation of POST done by VEN/SMH
+ ;
+ ; Web Service Post
+ ; 
+ ; Input:
+ ;     RETURN  - Returned data (by ref)
+ ;     HEADERS - Returned headers (by ref)
+ ;     SERVER  - Server Name in file 18.12 (e.g. PEPS)
+ ;     SERVICE - Service Name in file 18.02 (e.g. ORDER_CHECKS)
+ ;     PATH    - URL to append
+ ;     MIME    - Mime type to send
+ ;     PAYLOAD - What to send
+ ; 
+ ; Output:
+ ;     RETURN and HEADERS
+ ;
+ ; Mimicks GETREST^XOBWLIB Cache Classes --->>>
+ ;
+ ; Get Server IEN
+ N SERVERIEN S SERVERIEN=+$ORDER(^XOB(18.12,"B",SERVER,0)) ; per getWebServerId
+ I 'SERVERIEN S %XOBWERR=186005_U_SERVER,$EC=",UXOBW," ;##class(xobw.error.DialogError).forceError(186005_"^"_webServerName)
+ ;
+ ; Get Service IEN
+ N SERVICEIEN S SERVICEIEN=+$order(^XOB(18.02,"B",SERVICE,0)) ; per getWebServiceId(webServiceName)
+ I 'SERVICEIEN S %XOBWERR=186006_U_SERVICE,$EC=",UXOBW," ; #class(xobw.error.DialogError).forceError(186006_"^"_webServiceName)
+ ;
+ ; Service Type must be REST
+ I $P(^XOB(18.02,SERVICEIEN,0),U,2)'=2 S %XOBWERR=186007,$EC=",UXOBW," ; forceError(186007)
+ ;
+ ; Is Web Server disabled?
+ N Z S Z=^XOB(18.12,SERVERIEN,0) ; Zero node
+ I '$P(Z,U,6) S %XOBWERR=186002_U_$P(Z,U),$EC=",UXOBW,"  ; ##class(xobw.error.DialogError).forceError(186002_"^"_webServer.name)
+ ;
+ ; Is web service authorized? per getAuthorizedWebServiceId
+ N SUBSERVICEIEN S SUBSERVICEIEN=$O(^XOB(18.12,SERVERIEN,100,"B",SERVICEIEN,""))
+ I 'SUBSERVICEIEN S %XOBWERR=186003_U_$P(^XOB(18.02,SERVICEIEN,0),U)_U_$P(Z,U),$EC=",UXOBW," ;forceError(186003_"^"_..webServiceMetadata.name_"^"_webServer.name)
+ ;
+ ; Is the service disabled at the server level?
+ N SN S SN=^XOB(18.12,SERVERIEN,100,SUBSERVICEIEN,0) ; SN = service node
+ I '$P(SN,U,6) S %XOBWERR=186004_U_$P(^XOB(18.02,SERVICEIEN,0),U)_U_$P(Z,U),$EC=",UXOBW," ; forceError(186004_"^"_..webServiceMetadata.name_"^"_webServer.name)
+ ;
+ ; Get Username and password if present
+ ; Note: Code below different than Cache logic. Will only get un/pw if
+ ; it's Yes. Cache code gets it if Yes or empty.
+ N UN,PW
+ I $G(^XOB(18.12,SERVERIEN,1)) D
+ . S UN=^XOB(18.12,SERVERIEN,200)
+ . S PW=$$DECRYP^XOBWPWD($G(^XOB(18.12,SERVERIEN,300)))
+ ;
+ N FQDN S FQDN=$P(Z,U,4) ; IP or Domain name
+ N PORT S PORT=$P(Z,U,3) ; Http Port
+ N TO S TO=$P(Z,U,7) ; HTTP Timeout
+ N ISTLS S ISTLS=$P($G(^XOB(18.12,SERVERIEN,3)),U) ; Is SSL/TLS on?
+ I ISTLS S PORT=$P($G(^XOB(18.12,SERVERIEN,3)),U,3) ; replace port
+ N CONTEXT S CONTEXT=$G(^XOB(18.02,SERVICEIEN,200)) ; really, just the path on the server.
+ ;
+ ; Create URL
+ N URL S URL="http"_$S(ISTLS:"s",1:"")_"://"
+ I $G(UN)]"" S URL=URL_UN_":"_PW_"@"
+ S URL=URL_FQDN_":"_PORT_"/"_CONTEXT
+ I $G(PATH)]"" S URL=URL_PATH
+ ;
+ ; Action
+ D %^XOBWGUX(.RETURN,"POST",URL,.PAYLOAD,MIME,TO,.HEADERS)
+ ;
+ ; Check status code to be 200.
+ I '$$HTTPOK(HEADERS("STATUS")) S %XOBWERR=HEADERS("STATUS"),$EC=",UXOBWHTTP,"
+ QUIT:$QUIT HEADERS("STATUS")
+ QUIT
+ ;     
  ;
 HTTPCHK(XOBREST,XOBERR,XOBFERR) ; -- check HTTP response status code
  ; input:
