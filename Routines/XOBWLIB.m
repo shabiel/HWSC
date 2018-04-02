@@ -1,4 +1,4 @@
-XOBWLIB ;ALB/MJK - HWSC :: Utilities Library ;2018-03-30  2:17 PM
+XOBWLIB ;ALB/MJK - HWSC :: Utilities Library ;2018-04-02  4:37 PM
  ;;1.0;HwscWebServiceClient;**10001**;September 13, 2010;Build 31
  ; *10001 changes (throughout) by OSEHRA/Sam Habiel*
  ;
@@ -95,15 +95,37 @@ POSTGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD)  ; PEP -- POST on GT.M 
  ; GT.M implementation of POST done by VEN/SMH
  ;
  ; Web Service Post
+ ; Input:
+ ;     .RETURN  - Returned data (by ref)
+ ;     .HEADERS - Returned headers (by ref)
+ ;     SERVER  - Server Name in file 18.12 (e.g. PEPS)
+ ;     SERVICE - Service Name in file 18.02 (e.g. ORDER_CHECKS)
+ ;     PATH    - URL to append (optional)
+ ;     MIME    - Mime type to send (optional)
+ ;     .PAYLOAD - What to send (1,2,3 subscripts etc)
  ; 
+ ; Output:
+ ;     RETURN and HEADERS
+ ;
+ Q:$Q $$ALLGTM(.RETURN,.HEADERS,SERVER,SERVICE,$g(PATH),$g(MIME),.PAYLOAD,"POST")
+ D $$ALLGTM(.RETURN,.HEADERS,SERVER,SERVICE,$g(PATH),$g(MIME),.PAYLOAD,"POST")
+ QUIT
+ ;     
+GETGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME)  ; PEP -- POST on GT.M *10001*
+ Q:$Q $$ALLGTM(.RETURN,.HEADERS,SERVER,SERVICE,$g(PATH),$g(MIME),,"GET")
+ D ALLGTM(.RETURN,.HEADERS,SERVER,SERVICE,$g(PATH),$g(MIME),,"GET")
+ QUIT
+ ;
+ALLGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD,METHOD) ; [Private] Implementation of GET and POST
  ; Input:
  ;     RETURN  - Returned data (by ref)
  ;     HEADERS - Returned headers (by ref)
  ;     SERVER  - Server Name in file 18.12 (e.g. PEPS)
  ;     SERVICE - Service Name in file 18.02 (e.g. ORDER_CHECKS)
- ;     PATH    - URL to append
- ;     MIME    - Mime type to send
- ;     PAYLOAD - What to send
+ ;     PATH    - URL to append (optional)
+ ;     MIME    - Mime type to send (optional)
+ ;     PAYLOAD - What to send (required for POST)
+ ;     METHOD  - HTTP METHOD
  ; 
  ; Output:
  ;     RETURN and HEADERS
@@ -144,24 +166,41 @@ POSTGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD)  ; PEP -- POST on GT.M 
  N FQDN S FQDN=$P(Z,U,4) ; IP or Domain name
  N PORT S PORT=$P(Z,U,3) ; Http Port
  N TO S TO=$P(Z,U,7) ; HTTP Timeout
+ ;
  N ISTLS S ISTLS=$P($G(^XOB(18.12,SERVERIEN,3)),U) ; Is SSL/TLS on?
  I ISTLS S PORT=$P($G(^XOB(18.12,SERVERIEN,3)),U,3) ; replace port
+ N TLSCERT S TLSCERT=$P($G(^XOB(18.12,SERVERIEN,3)),U,2)
+ ;
+ N OPTIONS
+ ;     OPTIONS("cert")     = Client Certificate Path
+ ;     OPTIONS("key")      = Client Certificate Key
+ ;     OPTIONS("password") = Client Certificate Password
+ I TLSCERT]"" D
+ . N FULLPATH S FULLPATH=TLSCERT
+ . N PATH,FILE D SPLIT^%ZISH(FULLPATH,.PATH,.FILE)
+ . S PATH=$$DEFDIR^%ZISH(PATH) ; This will fail if it doesn't exist
+ . N NOEXT S NOEXT=$P(FILE,".",1,$L(FILE,".")-1)
+ . N KEY S KEY=NOEXT_".key"
+ . S OPTIONS("cert")=PATH_FILE
+ . S OPTIONS("key")=PATH_KEY
+ . N PW S PW=$$DECRYP^XOBWPWD($G(^XOB(18.12,SERVERIEN,300)))
+ . I PW]"" S OPTIONS("password")=PW
+ ;
  N CONTEXT S CONTEXT=$G(^XOB(18.02,SERVICEIEN,200)) ; really, just the path on the server.
  ;
  ; Create URL
  N URL S URL="http"_$S(ISTLS:"s",1:"")_"://"
  I $G(UN)]"" S URL=URL_UN_":"_PW_"@"
  S URL=URL_FQDN_":"_PORT_"/"_CONTEXT
- I $G(PATH)]"" S URL=URL_PATH
+ I $G(PATH)]"" S URL=URL_"/"_PATH
  ;
  ; Action
- D %^XOBWGUX(.RETURN,"POST",URL,.PAYLOAD,MIME,TO,.HEADERS)
+ D %^XOBWGUX(.RETURN,METHOD,URL,.PAYLOAD,$G(MIME),TO,.HEADERS,.OPTIONS)
  ;
  ; Check status code to be 200.
  I '$$HTTPOK(HEADERS("STATUS")) S %XOBWERR=HEADERS("STATUS"),$EC=",UXOBWHTTP,"
  QUIT:$QUIT HEADERS("STATUS")
  QUIT
- ;     
  ;
 HTTPCHK(XOBREST,XOBERR,XOBFERR) ; -- check HTTP response status code
  ; input:
