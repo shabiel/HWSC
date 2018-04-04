@@ -6,6 +6,9 @@ ported with the exception of support for WSDLs/SOAP messages. You can
 still use SOAP messages as HTTP Posted messages against REST endpoints as
 long as you create the contents of the SOAP message yourself.
 
+# Download
+https://github.com/shabiel/HWSC/releases/tag/XOBW-1.0-10001
+
 # External Documentation
 Documentation on the use of this package is located at
 https://www.va.gov/vdl/application.asp?appid=180.
