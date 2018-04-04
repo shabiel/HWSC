@@ -1,5 +1,6 @@
-XOBWSSL ;ALB/MJK - HWSC :: SSL Integration Tools ;2018-04-02  2:50 PM
+XOBWSSL ;ALB/MJK - HWSC :: SSL Integration Tools ;2018-04-04  12:11 PM
  ;;1.0;HwscWebServiceClient;*10001*;September 13, 2010;Build 31
+ ; Original Source Code authored by the Departement of Veteran's Affairs
  ; *10001* changes by OSEHRA/Sam Habiel 2018
  ;
  QUIT
@@ -19,7 +20,7 @@ CHKNAMEQ ; -- check name quit point
  ;
 DISPLAY ; -- display list of SSL configuration names  / used by XECUTABLE HELP (18.12 :3.02)
  QUIT:$$CACH2008()  ; skip display if Cache 2008/higher, can't check oustide %SYS
- QUIT:$$GTM() ; GT.M Okay *10001*
+ QUIT:$$GTM()  ; GT.M Okay *10001*
  NEW COUNT,RS,STATUS
  SET COUNT=0
  DO EN^DDIOL("Possible SSL configurations are the following:")
@@ -49,7 +50,7 @@ GETCFGQ ; -- get SSL config instance exit point
  ;
 SHOW(XOBCFGN) ; -- simple display of SSL Configuration
  QUIT:$$CACH2008()  ; skip if Cache 2008/higher, can't check oustide %SYS 
- QUIT:$$GTM() ; GT.M Okay *10001*
+ QUIT:$$GTM()  ; GT.M Okay *10001*
  NEW CFG
  SET CFG=$$GETCFG(XOBCFGN)
  IF CFG="" GOTO SHOWQ

@@ -1,6 +1,7 @@
-XOBWLIB ;ALB/MJK - HWSC :: Utilities Library ;2018-04-02  4:37 PM
+XOBWLIB ;ALB/MJK - HWSC :: Utilities Library ;2018-04-04  12:11 PM
  ;;1.0;HwscWebServiceClient;**10001**;September 13, 2010;Build 31
- ; *10001 changes (throughout) by OSEHRA/Sam Habiel*
+ ; Original Source Code authored by the Departement of Veteran's Affairs
+ ; *10001 changes (throughout) by OSEHRA/Sam Habiel 2018
  ;
  QUIT
  ;
@@ -11,12 +12,14 @@ XOBWLIB ;ALB/MJK - HWSC :: Utilities Library ;2018-04-02  4:37 PM
 GETFAC(XOBWSN) ; -- get web service proxy factory
  ;  Input:
  ;    XOBWSN    -   web service name  
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  QUIT ##class(xobw.WebServiceProxyFactory).%New(XOBWSN)
  ;
 GETPROXY(XOBWSN,XOBSRVR) ; -- get web service proxy
  ;  Input:
  ;    XOBWSN    -   web service name
  ;    XOBSRVR   -   web server name
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  QUIT ##class(xobw.WebServiceProxyFactory).getWebServiceProxy(XOBWSN,XOBSRVR)
  ;
 GENPORT(XOBY) ; -- generate http port class from WSDL during install
@@ -35,6 +38,7 @@ REGSOAP(XOBWSN,XOBCXT,XOBCLASS,XOBWSDL,XOBCAURL) ; -- register SOAP service
 ATTACHDR(XOBPROXY) ; -- add VistaInfoHeader to proxy object
  ; Input: 
  ;   XOBPROXY   -   web service proxy object
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  DO ATTACHDR^XOBWLIB1(.XOBPROXY)
  QUIT
  ;
@@ -49,12 +53,14 @@ UNREG(XOBWSN) ; unregister/delete REST *or* SOAP web service
 GETRESTF(XOBWSN) ; -- get REST service request factory
  ;  Input:
  ;    XOBWSN    -   web service name 
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  QUIT ##class(xobw.RestRequestFactory).%New(XOBWSN)
  ;
 GETREST(XOBWSN,XOBSRVR) ; -- get REST service request
  ;  Input:
  ;    XOBWSN    -   web service name
  ;    XOBSRVR   -   web server name 
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  QUIT ##class(xobw.RestRequestFactory).getRestRequest(XOBWSN,XOBSRVR)
  ;
 REGREST(XOBWSN,XOBCXT,XOBCAURL) ; -- register REST service
@@ -73,6 +79,8 @@ GET(XOBREST,XOBRSCE,XOBERR,XOBFERR) ; -- do HTTP GET method and force M/Cache er
  ;     XOBERR  = where to store HWSC error object if problem encountered
  ;     XOBFERR = if error object created, force M/Cache error [1], otherwise return to caller [0]
  ;               [optional ; default = 1]
+ IF ^%ZOSF("OS")["GT.M" S $EC=",U-USE-GETGTM,"
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  NEW XOBOK
  SET XOBOK=$$STATCHK(XOBREST.Get(XOBRSCE),.XOBERR,$GET(XOBFERR,1))
  IF XOBOK SET XOBOK=$$HTTPCHK(XOBREST,.XOBERR,$GET(XOBFERR,1))
@@ -86,12 +94,15 @@ POST(XOBREST,XOBRSCE,XOBERR,XOBFERR) ; -- do HTTP POST method and force M/Cache 
  ;     XOBERR  = where to store HWSC error object if problem encountered
  ;     XOBFERR = if error object created, force M/Cache error [1], otherwise return to caller [0]
  ;               [optional ; default = 1]
+ IF ^%ZOSF("OS")["GT.M" S $EC=",U-USE-POSTGTM,"
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  NEW XOBOK
  SET XOBOK=$$STATCHK(XOBREST.Post(XOBRSCE),.XOBERR,$GET(XOBFERR,1))
  IF XOBOK SET XOBOK=$$HTTPCHK(XOBREST,.XOBERR,$GET(XOBFERR,1))
  QUIT XOBOK
  ;
 POSTGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD)  ; PEP -- POST on GT.M *10001*
+ IF ^%ZOSF("OS")["OpenM" S $EC=",U-USE-POST,"
  ; GT.M implementation of POST done by VEN/SMH
  ;
  ; Web Service Post
@@ -102,7 +113,7 @@ POSTGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD)  ; PEP -- POST on GT.M 
  ;     SERVICE - Service Name in file 18.02 (e.g. ORDER_CHECKS)
  ;     PATH    - URL to append (optional)
  ;     MIME    - Mime type to send (optional)
- ;     .PAYLOAD - What to send (1,2,3 subscripts etc)
+ ;     .PAYLOAD - What to send (1,2,3 subscripts etc) (required)
  ; 
  ; Output:
  ;     RETURN and HEADERS
@@ -112,20 +123,23 @@ POSTGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD)  ; PEP -- POST on GT.M 
  QUIT
  ;     
 GETGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME)  ; PEP -- POST on GT.M *10001*
+ IF ^%ZOSF("OS")["OpenM" S $EC=",U-USE-GET,"
  Q:$Q $$ALLGTM(.RETURN,.HEADERS,SERVER,SERVICE,$g(PATH),$g(MIME),,"GET")
  D ALLGTM(.RETURN,.HEADERS,SERVER,SERVICE,$g(PATH),$g(MIME),,"GET")
  QUIT
  ;
-ALLGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD,METHOD) ; [Private] Implementation of GET and POST
+ALLGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD,METHOD,AV) ; [Private] Implementation of GET and POST
  ; Input:
  ;     RETURN  - Returned data (by ref)
  ;     HEADERS - Returned headers (by ref)
- ;     SERVER  - Server Name in file 18.12 (e.g. PEPS)
- ;     SERVICE - Service Name in file 18.02 (e.g. ORDER_CHECKS)
+ ;     SERVER  - Server Name in file 18.12 (e.g. PEPS) (or IEN)
+ ;     SERVICE - Service Name in file 18.02 (e.g. ORDER_CHECKS) (or -
+ ;               for availability check)
  ;     PATH    - URL to append (optional)
  ;     MIME    - Mime type to send (optional)
  ;     PAYLOAD - What to send (required for POST)
- ;     METHOD  - HTTP METHOD
+ ;     METHOD  - HTTP METHOD (required)
+ ;     AV      - Check Availability Only (boolean, optional)
  ; 
  ; Output:
  ;     RETURN and HEADERS
@@ -133,34 +147,38 @@ ALLGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD,METHOD) ; [Private] Imple
  ; Mimicks GETREST^XOBWLIB Cache Classes --->>>
  ;
  ; Get Server IEN
- N SERVERIEN S SERVERIEN=+$ORDER(^XOB(18.12,"B",SERVER,0)) ; per getWebServerId
- I 'SERVERIEN S %XOBWERR=186005_U_SERVER,$EC=",UXOBW," ;##class(xobw.error.DialogError).forceError(186005_"^"_webServerName)
+ N SERVERIEN
+ I +SERVER=SERVER S SERVERIEN=SERVER
+ E  S SERVERIEN=+$ORDER(^XOB(18.12,"B",SERVER,0)) ; per getWebServerId
+ I 'SERVERIEN S %XOBWERR=186005_U_SERVER,$EC=",UXOBW-NO-SERVER," ;##class(xobw.error.DialogError).forceError(186005_"^"_webServerName)
  ;
  ; Get Service IEN
- N SERVICEIEN S SERVICEIEN=+$order(^XOB(18.02,"B",SERVICE,0)) ; per getWebServiceId(webServiceName)
- I 'SERVICEIEN S %XOBWERR=186006_U_SERVICE,$EC=",UXOBW," ; #class(xobw.error.DialogError).forceError(186006_"^"_webServiceName)
+ N SERVICEIEN
+ I +SERVICE=SERVICE S SERVICEIEN=SERVICE
+ E  S SERVICEIEN=+$order(^XOB(18.02,"B",SERVICE,0)) ; per getWebServiceId(webServiceName)
+ I 'SERVICEIEN S %XOBWERR=186006_U_SERVICE,$EC=",UXOBW-NO-SERVICE," ; #class(xobw.error.DialogError).forceError(186006_"^"_webServiceName)
  ;
  ; Service Type must be REST
- I $P(^XOB(18.02,SERVICEIEN,0),U,2)'=2 S %XOBWERR=186007,$EC=",UXOBW," ; forceError(186007)
+ I $P(^XOB(18.02,SERVICEIEN,0),U,2)'=2 S %XOBWERR=186007,$EC=",UXOBW-NOT-REST," ; forceError(186007)
  ;
  ; Is Web Server disabled?
  N Z S Z=^XOB(18.12,SERVERIEN,0) ; Zero node
- I '$P(Z,U,6) S %XOBWERR=186002_U_$P(Z,U),$EC=",UXOBW,"  ; ##class(xobw.error.DialogError).forceError(186002_"^"_webServer.name)
+ I '$P(Z,U,6) S %XOBWERR=186002_U_$P(Z,U),$EC=",UXOBW-SERVER-DISABLED,"  ; ##class(xobw.error.DialogError).forceError(186002_"^"_webServer.name)
  ;
  ; Is web service authorized? per getAuthorizedWebServiceId
  N SUBSERVICEIEN S SUBSERVICEIEN=$O(^XOB(18.12,SERVERIEN,100,"B",SERVICEIEN,""))
- I 'SUBSERVICEIEN S %XOBWERR=186003_U_$P(^XOB(18.02,SERVICEIEN,0),U)_U_$P(Z,U),$EC=",UXOBW," ;forceError(186003_"^"_..webServiceMetadata.name_"^"_webServer.name)
+ I 'SUBSERVICEIEN S %XOBWERR=186003_U_$P(^XOB(18.02,SERVICEIEN,0),U)_U_$P(Z,U),$EC=",UXOBW-SERVICE-NOTSUBSCRIBED," ;forceError(186003_"^"_..webServiceMetadata.name_"^"_webServer.name)
  ;
- ; Is the service disabled at the server level?
+ ; Is the service disabled at the service level?
  N SN S SN=^XOB(18.12,SERVERIEN,100,SUBSERVICEIEN,0) ; SN = service node
- I '$P(SN,U,6) S %XOBWERR=186004_U_$P(^XOB(18.02,SERVICEIEN,0),U)_U_$P(Z,U),$EC=",UXOBW," ; forceError(186004_"^"_..webServiceMetadata.name_"^"_webServer.name)
+ I '$P(SN,U,6) S %XOBWERR=186004_U_$P(^XOB(18.02,SERVICEIEN,0),U)_U_$P(Z,U),$EC=",UXOBW-SERVICE-DISABLED," ; forceError(186004_"^"_..webServiceMetadata.name_"^"_webServer.name)
  ;
  ; Get Username and password if present
  ; Note: Code below different than Cache logic. Will only get un/pw if
  ; it's Yes. Cache code gets it if Yes or empty.
  N UN,PW
  I $G(^XOB(18.12,SERVERIEN,1)) D
- . S UN=^XOB(18.12,SERVERIEN,200)
+ . S UN=$G(^XOB(18.12,SERVERIEN,200))
  . S PW=$$DECRYP^XOBWPWD($G(^XOB(18.12,SERVERIEN,300)))
  ;
  N FQDN S FQDN=$P(Z,U,4) ; IP or Domain name
@@ -170,6 +188,9 @@ ALLGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD,METHOD) ; [Private] Imple
  N ISTLS S ISTLS=$P($G(^XOB(18.12,SERVERIEN,3)),U) ; Is SSL/TLS on?
  I ISTLS S PORT=$P($G(^XOB(18.12,SERVERIEN,3)),U,3) ; replace port
  N TLSCERT S TLSCERT=$P($G(^XOB(18.12,SERVERIEN,3)),U,2)
+ ;
+ ; This is for the no-op Cache just connect to TLS config. Void that!!!
+ I TLSCERT="encrypt_only" S TLSCERT=""
  ;
  N OPTIONS
  ;     OPTIONS("cert")     = Client Certificate Path
@@ -186,23 +207,35 @@ ALLGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD,METHOD) ; [Private] Imple
  . N PW S PW=$$DECRYP^XOBWPWD($G(^XOB(18.12,SERVERIEN,300)))
  . I PW]"" S OPTIONS("password")=PW
  ;
- N CONTEXT S CONTEXT=$G(^XOB(18.02,SERVICEIEN,200)) ; really, just the path on the server.
+ ; NB: How avialability works here is different from the Cache implementation
+ ;     AV is a separate path; Cache implementation appends it to context which I think is wrong!
+ N CONTEXT S CONTEXT=$G(^XOB(18.02,SERVICEIEN,200)) ; context is just the path on the server.
+ I $G(AV),$G(^XOB(18.02,SERVICEIEN,201))]"" S CONTEXT=$G(^XOB(18.02,SERVICEIEN,201)) ; availability resource
  ;
  ; Create URL
- N URL S URL="http"_$S(ISTLS:"s",1:"")_"://"
- I $G(UN)]"" S URL=URL_UN_":"_PW_"@"
- S URL=URL_FQDN_":"_PORT_"/"_CONTEXT
- I $G(PATH)]"" S URL=URL_"/"_PATH
+ N URL S URL="http"_$S(ISTLS:"s",1:"")_"://" ; http/https://
+ I $G(UN)]"" S URL=URL_UN_":"_PW_"@"         ; https://sam:boo@
+ S URL=URL_FQDN_":"_PORT                     ; https://sam:boo@rxnav.nlm.nih.gov
+ I $E(CONTEXT)="/" S URL=URL_CONTEXT         ;
+ E  S URL=URL_"/"_CONTEXT                    ; https://sam:boo@rxnav.nlm.nih.gov/REST/interaction/list.json
+ I $G(PATH)]"" S URL=URL_PATH                ; https://sam:boo@rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=207106+152923+656659
  ;
  ; Action
- D %^XOBWGUX(.RETURN,METHOD,URL,.PAYLOAD,$G(MIME),TO,.HEADERS,.OPTIONS)
+ ; %ZCLOSE is the Return Code from the CURL command. Success is zero.
+ N %ZCLOSE S %ZCLOSE=$$%^XOBWGUX(.RETURN,METHOD,URL,.PAYLOAD,$get(MIME),TO,.HEADERS,.OPTIONS)
+ ;
+ ; Error from curl. Give that back to the user.
+ IF %ZCLOSE S $EC=",U-CURL-"_%ZCLOSE_","
  ;
  ; Check status code to be 200.
+ ; NB: I don't like this. We did get a response, so should we error?
+ ; Cache code does that now.
  I '$$HTTPOK(HEADERS("STATUS")) S %XOBWERR=HEADERS("STATUS"),$EC=",UXOBWHTTP,"
  QUIT:$QUIT HEADERS("STATUS")
  QUIT
  ;
 HTTPCHK(XOBREST,XOBERR,XOBFERR) ; -- check HTTP response status code
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  ; input:
  ;     XOBREST = instance of xobw.RestRequest class
  ;     XOBERR  = where to store HWSC error object if problem encountered
@@ -224,6 +257,7 @@ HTTPOK(XOBSCODE) ; -- is HTTP response status code an 'OK' code
  ;. . . . . . . . . . . Error Processing Helper API . . . . . . . . . . .
  ;
 EOFAC(XOBPROXY) ; --  Error Object FACtory
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  ;      > finds and parses errors in partition
  ;      > builds and returns error object for easier processing
  ;
@@ -233,26 +267,31 @@ EOFAC(XOBPROXY) ; --  Error Object FACtory
  QUIT $$EOFAC^XOBWLIB1(.XOBPROXY)
  ;
 EOSTAT(XOBSO) ; -- create object error from status error object
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  NEW $ETRAP
  SET $ETRAP="D ^%ZTER HALT"
  QUIT ##class(xobw.error.ObjectError).%New(XOBSO)
  ;
 EOHTTP(XOBHRO) ; -- create object error from %Net.HttpResponse object
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  NEW $ETRAP
  SET $ETRAP="D ^%ZTER HALT"
  QUIT ##class(xobw.error.HttpError).%New(XOBHRO)
  ;
 ERRDISP(XOBEO) ; -- do simple error display
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  IF $GET(XOBEO)]"",XOBEO.%IsA("xobw.error.AbstractError") DO
  . DO XOBEO.display()
  QUIT
  ;
 ERR2ARR(XOBEO,XOBERR) ; -- decompose error for traditional M processing
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  IF $GET(XOBEO)]"",XOBEO.%IsA("xobw.error.AbstractError") DO
  . DO XOBEO.decompose(.XOBERR)
  QUIT
  ;
 ZTER(XOBEO) ; -- build error object array and call error trap
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  NEW $ETRAP,XOBEOARR
  SET $ETRAP="D ^%ZTER HALT"
  IF $GET(XOBEO)]"" DO ERR2ARR(.XOBEO,.XOBEOARR)
@@ -260,6 +299,7 @@ ZTER(XOBEO) ; -- build error object array and call error trap
  QUIT
  ;
 STATCHK(XOBSO,XOBERR,XOBFERR) ; -- check Cache Status Object
+ IF ^%ZOSF("OS")'["OpenM" S $EC=",U-UNIMPLEMENTED,"
  ; input:
  ;     XOBSO   = Cache status object
  ;     XOBERR  = where to store HWSC error object if problem encountered

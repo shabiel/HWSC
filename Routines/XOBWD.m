@@ -1,5 +1,6 @@
-XOBWD ;ALB/MJK - HWSC :: Private Deployment APIs ;2018-03-30  1:52 PM
+XOBWD ;ALB/MJK - HWSC :: Private Deployment APIs ;2018-04-04  12:10 PM
  ;;1.0;HwscWebServiceClient;**10001**;September 13, 2010;Build 31
+ ; Original Source Code authored by the Departement of Veteran's Affairs
  ; *10001* changes by OSEHRA/Sam Habiel 2018
  ;
  QUIT
