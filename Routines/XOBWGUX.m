@@ -1,4 +1,4 @@
-XOBWGUX ; VEN/SMH - Web Services Client using cURL ;2018-03-30  1:24 PM
+XOBWGUX ; VEN/SMH - Web Services Client using cURL ;2018-04-02  3:52 PM
  ;;1.0;HwscWebServiceClient;**10001**;September 13, 2010;Build 9
  ;
  ; (c) Sam Habiel 2016,2018
@@ -92,6 +92,10 @@ XOBWGUX ; VEN/SMH - Web Services Client using cURL ;2018-03-30  1:24 PM
  W "max-time = ",TO,!
  W "silent",!
  W "include",!
+ ; W "location",! ; This follows the URL around with redirects, but could be a security risk.
+ ;                ; And you don't want to waste precious time bouncing getting to the right URL
+ ;                ; GET IT RIGHT THE FIRST TIME!
+ ; W "insecure",! ; This disables certificate security checking. BAD!
  I $G(MIME)]"" W "header = "_Q_"Content-Type: "_MIME_Q,!
  I $D(PAYLOAD),'$D(OPTIONS("form")) W "data-binary = "_Q_"@"_F_Q,!
  I $D(OPTIONS) D
