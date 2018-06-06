@@ -9,6 +9,9 @@ long as you create the contents of the SOAP message yourself.
 # Download
 https://github.com/shabiel/HWSC/releases/tag/XOBW-1.0-10001
 
+# Install
+See Install Instructions Later in this Document
+
 # External Documentation
 Documentation on the use of this package is located at
 https://www.va.gov/vdl/application.asp?appid=180.
@@ -480,7 +483,11 @@ LIST TEMPLATE:                                 ACTION:
 
 # Installation Instructions
 ## Pre-Install Instructions
-None.
+On Intersystems Cache, download
+https://foia-vista.osehra.org/Patches_By_Application/XOBW-WEB%20SERVICES%20CLIENT/XOBW_1_0_B31_KIDS_BUILD.ZIP,
+and extract from it the Cache Classes .xml file, and then rename it to
+xobw4.xml, and put it in the default HFS directory (obtained by
+`$$DEFDIR^%ZISH()`)
 
 ## Install Instructions
  Installation time should be less than 5 seconds.
@@ -703,6 +710,81 @@ Build Distribution Date: Apr 04, 2018
  Not a VA primary domain
  
  NO Install Message sent 
+```
+
+On Cache, you will see the following:
+```
+
+ Running Post-Install Routine: EN^XOBWPST.
+
+ o  Deleting xobw classes:
+Deleting class xobw.RestRequest
+Deleting class xobw.RestRequestFactory
+Deleting class xobw.VistaInfoHeader
+Deleting class xobw.WebServer
+Deleting class xobw.WebServiceMetadata
+Deleting class xobw.WebServiceProxyFactory
+Deleting class xobw.WebServicesAuthorized
+Deleting class xobw.WsdlHandler
+Deleting class xobw.error.AbstractError
+Deleting class xobw.error.BasicError
+Deleting class xobw.error.DialogError
+Deleting class xobw.error.HttpError
+Deleting class xobw.error.ObjectError
+Deleting class xobw.error.SoapError
+
+       ...[xobw] deletion finished successfully.
+
+Load started on 06/06/2018 09:37:09
+Loading file C:\HFS\xobw4.xml as xml
+Imported class: xobw.RestRequest
+Imported class: xobw.RestRequestFactory
+Imported class: xobw.VistaInfoHeader
+Imported class: xobw.WebServer
+Imported class: xobw.WebServiceMetadata
+Imported class: xobw.WebServiceProxyFactory
+Imported class: xobw.WebServicesAuthorized
+Imported class: xobw.WsdlHandler
+Imported class: xobw.error.AbstractError
+Imported class: xobw.error.BasicError
+Imported class: xobw.error.DialogError
+Imported class: xobw.error.HttpError
+Imported class: xobw.error.ObjectError
+Imported class: xobw.error.SoapError, compiling 14 classes
+Compiling class xobw.RestRequest
+Compiling class xobw.RestRequestFactory
+Compiling class xobw.VistaInfoHeader
+Compiling class xobw.WebServer
+Compiling class xobw.WebServiceMetadata
+Compiling class xobw.WebServiceProxyFactory
+Compiling class xobw.WsdlHandler
+Compiling class xobw.error.AbstractError
+Compiling class xobw.WebServicesAuthorized
+Compiling class xobw.error.BasicError
+Compiling class xobw.error.DialogError
+Compiling class xobw.error.HttpError
+Compiling class xobw.error.ObjectError
+Compiling class xobw.error.SoapError
+Compiling table xobw.WebServer
+Compiling table xobw.WebServiceMetadata
+Compiling table xobw.WebServicesAuthorized
+Compiling routine xobw.RestRequest.1
+Compiling routine xobw.RestRequestFactory.1
+Compiling routine xobw.VistaInfoHeader.1
+Compiling routine xobw.WebServer.1
+Compiling routine xobw.WebServiceMetadata.1
+Compiling routine xobw.WebServiceProxyFactory.1
+Compiling routine xobw.WsdlHandler.1
+Compiling routine xobw.error.AbstractError.1
+Compiling routine xobw.WebServicesAuthorized.1
+Compiling routine xobw.error.BasicError.1
+Compiling routine xobw.error.DialogError.1
+Compiling routine xobw.error.HttpError.1
+Compiling routine xobw.error.ObjectError.1
+Compiling routine xobw.error.SoapError.1
+Load finished successfully.
+
+ o  Support classes imported successfully.
 ```
 
 ## Post-install instructions
