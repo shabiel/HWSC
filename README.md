@@ -27,7 +27,18 @@ Any public entry points that won't work on GT.M will fail with $EC of
 ,U-UNIMPLEMENTED,. The main reason they won't work is that the entry point
 expects Cache Objects.
 
-Unlike Cache, GT.M port does not need a SSL/TLS Configuration in order to perform normal HTTPS communication. If you want to use a certificate to authenticate, place the certificate and the key in a folder, and put the path to the certificate into the SSL/TLS Configuration field. The key file must end with .key and be in the same folder as the certificate. If the key file is password protected, store the password in the password field normally reserved for HTTP authentication and it will be used to decrypt the key.  A full programmatic example can be found in `T7^XOBWTGUX`.
+Unlike Cache, GT.M port does not need a SSL/TLS Configuration in order to
+perform normal HTTPS communication. If you want to use a certificate to
+authenticate, place the certificate and the key in a folder, and put the path
+to the certificate into the SSL/TLS Configuration field. The key file must end
+with .key and be in the same folder as the certificate. 
+
+If the key file is password protected, store the password in the password field
+normally reserved for HTTP authentication and it will be used to decrypt the
+key.  A full programmatic example can be found in `T7^XOBWTGUX`. Please note
+that in our testing this doesn't work reliably across platforms. Therefore,
+prior to using password protected keys, ensure that you can use command line
+curl to perform the operation before using this software.
 
 # GTM Entry points signature
 ```
@@ -253,7 +264,9 @@ port number and the UCI.
 
 ## Automated set-up of Server and Services
 This annotated code example shows you how to set-up the same components
-programmtically. The failures here use FAIL^%ut to log the error, but in a production instance, you should log these errors appropriately. The ASSERTs should be substituted with a runtime check.
+programmtically. The failures here use FAIL^%ut to log the error, but in a
+production instance, you should log these errors appropriately. The ASSERTs
+should be substituted with a runtime check.
 
 ```
  ; curl https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=207106+152923+656659
@@ -315,18 +328,27 @@ Errors are thrown as M errors.
 | ,U-CURL-35,| cURL error. TLS Connection error. |
 
 # External Dependencies
-This package relies on the cURL executable to be available in the PATH of the GT.M process. cURL is normally installed by default in Windows, Linux and Mac.
+This package relies on the cURL executable to be available in the PATH of the
+GT.M process. cURL is normally installed by default in Windows, Linux and Mac.
+The Unit Tests rely on the `openssl` command, which also needs to be found in
+the path.
 
 GT.M Version must be 6.1 or higher for $ZCLOSE support.
 
 # Internal Dependencies
-The package relies on XU*8.0*10001 (shabiel/Kernel-GTM repo) for some minor functionality.
+The package relies on XU*8.0*10001 (shabiel/Kernel-GTM repo) for some minor
+functionality.
 
-The package relies on XLFJSON found in patch XU*8.0*680 for Unit Tests. Normal operation does not use it.
+The package relies on XLFJSON found in patch XU*8.0*680 for Unit Tests. Normal
+operation does not use it.
 
-The package relies on M-Unit found on joelivey/M-Unit repo for running Unit Tests.
+The package relies on M-Unit found on joelivey/M-Unit repo for running Unit
+Tests.
 
 # Unit Testing
+Please note that Unit Test T7 (client certificate with password) does not work
+reliably across platforms. It won't run normally when you try to run all the
+unit tests.
 ```
 FOIA201802>D ^XOBWTGUX
 
@@ -354,7 +376,6 @@ T5 - HTTP-AUTH over HTTPS test to httpbin.org.
  o  WEB SERVICE 'HTTPBIN-AUTH' unauthorized from 'HTTPBINS'.
  o  WEB SERVICE 'HTTPBIN-AUTH' unregistered/deleted..---------  [OK]  534.984ms
 T6 - Test TLS with a Client Cert s/ password.......-----------  [OK] 2230.235ms
-T7 - Test TLS with a Client Cert w/ password.......-----------  [OK] 1683.435ms
 T8 - - Test Availability checker...---------------------------  [OK]  784.747ms
 T9 - - RxNorm Interaction API 
  o  WEB SERVICE 'RXNORM-IXN' addition/update succeeded.
