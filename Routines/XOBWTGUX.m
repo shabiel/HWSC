@@ -1,5 +1,5 @@
-XOBWTGUX ; OSERHA/SMH - Unit Test Routines for HWSC Port to GT.M;2018-04-04  12:12 PM
- ;;1.0;HwscWebServiceClient;**10001**;September 13, 2010;Build 9
+XOBWTGUX ; OSERHA/SMH - Unit Test Routines for HWSC Port to GT.M;Sep 25, 2018@10:25
+ ;;1.0;HwscWebServiceClient;**10001**;September 13, 2010;Build 37
  ;
  ; (c) Sam Habiel 2018
  ; Licensed under Apache 2
@@ -230,7 +230,9 @@ T6 ; @TEST Test TLS with a Client Cert s/ password
  D ASSERT(%=1)
  QUIT
  ;
-T7 ; @TEST Test TLS with a Client Cert w/ password
+T7 ; #TEST Test TLS with a Client Cert w/ password
+ ; NB: This test is disabled as it only works on Ubuntu right now
+ ; It fails on Cygwin and CentOS due to how OpenSSL/cURL are compiled.
  ;
  ; Create the certificates (client cert has password now)
  N %CMD
