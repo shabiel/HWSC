@@ -1,5 +1,5 @@
-XOBWLIB ;ALB/MJK - HWSC :: Utilities Library ;2018-04-04  12:11 PM
- ;;1.0;HwscWebServiceClient;**10001**;September 13, 2010;Build 31
+XOBWLIB ;ALB/MJK - HWSC :: Utilities Library ;Oct 15, 2018@08:43
+ ;;1.0;HwscWebServiceClient;**10001**;September 13, 2010;Build 37
  ; Original Source Code authored by the Departement of Veteran's Affairs
  ; *10001 changes (throughout) by OSEHRA/Sam Habiel 2018
  ;
@@ -119,7 +119,7 @@ POSTGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME,PAYLOAD)  ; PEP -- POST on GT.M 
  ;     RETURN and HEADERS
  ;
  Q:$Q $$ALLGTM(.RETURN,.HEADERS,SERVER,SERVICE,$g(PATH),$g(MIME),.PAYLOAD,"POST")
- D $$ALLGTM(.RETURN,.HEADERS,SERVER,SERVICE,$g(PATH),$g(MIME),.PAYLOAD,"POST")
+ D ALLGTM(.RETURN,.HEADERS,SERVER,SERVICE,$g(PATH),$g(MIME),.PAYLOAD,"POST")
  QUIT
  ;     
 GETGTM(RETURN,HEADERS,SERVER,SERVICE,PATH,MIME)  ; PEP -- POST on GT.M *10001*
